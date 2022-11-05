@@ -56,7 +56,6 @@ public class Gui {
         });
 
         JLabel lblClose = new JLabel(" x");
-
         lblClose.addMouseListener(new MouseAdapter()   {
             public void mouseClicked(MouseEvent e)
             {
@@ -121,7 +120,18 @@ public class Gui {
         addLeftAligned(pnlMain, (JComponent) Box.createVerticalStrut(10));
 
         JTextArea outTextArea = new JTextArea();
-        JTable pathTable = new JTable();
+        DefaultTableModel modelPath = new DefaultTableModel();
+        modelPath.addColumn("Filepath");
+        JTable pathTable = new JTable(modelPath){
+            public String getToolTipText(MouseEvent event)
+            {
+                int col  = convertColumnIndexToModel(columnAtPoint(event.getPoint()));
+                int row = convertRowIndexToModel(rowAtPoint(event.getPoint()));
+                return (String)modelPath.getValueAt(row,col);
+            }
+        };
+        pathTable.setDefaultEditor(Object.class, null);
+
         JTable scopeTable = new JTable();
 
         JButton btnActive = new JButton("Current Semgrepper is off");
@@ -170,15 +180,11 @@ public class Gui {
         rulePanel.add(ruleAlignPanel);
         rulePanel.add(ruleTabPanel);
 
-        JTextArea prevArea = new JTextArea(); // Preview
+        JTextArea prevArea = new JTextArea();
         prevArea.setEditable(false);
         JPanel prevPanel = new JPanel();
         JScrollPane prevScroll = new JScrollPane(prevArea);
 
-
-        DefaultTableModel modelPath = new DefaultTableModel();
-        modelPath.addColumn("Filepath");
-        pathTable.setModel(modelPath);
         pathTable.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -449,7 +455,7 @@ public class Gui {
         addLeftAligned(pnlMain, new JSeparator());
         // Output =====================================
 
-        addLeftAligned(pnlMain, createTitle("Output"));
+        addLeftAligned(pnlMain, createTitle("Error Logs"));
         addLeftAligned(pnlMain, new JLabel("The following panel reports the error logs of the current panel."));
 
 
@@ -457,7 +463,7 @@ public class Gui {
         outTextArea.setEditable(false);
 
         JScrollPane outScroll = new JScrollPane(outTextArea);
-        outScroll.setPreferredSize(new Dimension(outScroll.getWidth(),200));
+        outScroll.setPreferredSize(new Dimension(outScroll.getWidth(),150));
 
         addLeftAligned(pnlMain, outScroll);
 
