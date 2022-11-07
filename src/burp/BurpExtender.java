@@ -50,7 +50,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
             callbacks.addSuiteTab(mainTab);
         }else{
             JPanel errPanel = new JPanel();
-            errPanel.add(new JLabel("Please Install Semgrep before using this extension."));
+            errPanel.add(new JLabel("Semgrep is required to use this extension."));
             Tab mainTab = new Tab(errPanel);
             callbacks.addSuiteTab(mainTab);
         }
