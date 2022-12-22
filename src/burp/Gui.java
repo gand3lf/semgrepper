@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class Gui {
     public JPanel rootPanel;
@@ -212,6 +213,7 @@ public class Gui {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         btnSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -219,7 +221,32 @@ public class Gui {
                 if (choice == JFileChooser.APPROVE_OPTION) {
                     File[] openFiles = fileChooser.getSelectedFiles();
                     for(File f: openFiles){
-                        modelPath.addRow(new String[]{f.getAbsolutePath()});
+                        if(f.isDirectory()) {
+                            try {
+                                Stream<Path> pathStream = Files.find(f.toPath(),
+                                        Integer.MAX_VALUE,
+                                        (p, basicFileAttributes) ->{
+                                            // if directory or no-read permission, ignore
+                                            if(Files.isDirectory(p) || !Files.isReadable(p)){
+                                                return false;
+                                            }
+                                            return true;
+                                        });
+                                pathStream.forEach((currPath)->{
+                                    String fileName = currPath.getFileName().toString();
+                                    if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
+                                        modelPath.addRow(new String[]{currPath.toString()});
+                                    }
+                                });
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }else {
+                            String fileName = f.getName();
+                            if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
+                                modelPath.addRow(new String[]{f.getAbsolutePath()});
+                            }
+                        }
                     }
                     if(btnActive.getText().equals("Current Semgrepper is on"))
                         btnActive.doClick();

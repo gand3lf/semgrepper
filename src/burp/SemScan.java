@@ -233,7 +233,7 @@ class CustomScanIssue implements IScanIssue{
     @Override
     public String getConfidence()
     {
-        return "Certain";
+        return "Firm";
     }
 
     @Override
