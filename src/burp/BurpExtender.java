@@ -44,8 +44,8 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         }else{
             JPanel errPanel = new JPanel();
             String msg = "\nIt seems that you don't have Semgrep installed!\n\nPlease, follow these instructions to install it:\n";
-            msg += " • Ubuntu, Windows through Windows Subsystem for Linux (WSL), Linux, macOS:\n     python3 -m pip install semgrep\n";
-            msg += " • macOS:\n     brew install semgrep";
+            msg += " - Ubuntu, Windows through Windows Subsystem for Linux (WSL), Linux, macOS:\n     python3 -m pip install semgrep\n";
+            msg += " - macOS:\n     brew install semgrep";
             JTextArea textArea = new JTextArea(msg);
             textArea.setBorder(null);
             textArea.setEditable(false);
