@@ -1,0 +1,32 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.portswigger.burp.extender:burp-extender-api:2.3'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'resources'
+        }
+    }
+}
+
+task fatJar(type: Jar) {
+
+    baseName = project.name + '-all'
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+compileJava {
+    targetCompatibility '1.8'
+    sourceCompatibility '1.8'
+}
