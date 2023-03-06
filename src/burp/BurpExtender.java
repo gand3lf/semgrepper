@@ -26,7 +26,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
         processBuilder.command(cmdParam);
         try {
             Process process = processBuilder.start();
-            int exitVal = process.waitFor();
+            int exitVal = process.exitValue();
             if(exitVal != 0)
                 semgrepInstalled = false;
         }catch(Exception e){
