@@ -19,11 +19,14 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
         boolean semgrepInstalled = true;
 
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        List<String> cmdParam = new ArrayList<>();
-        cmdParam.add("semgrep");
-        cmdParam.add("--version");
-        processBuilder.command(cmdParam);
+        Map<String, String> envs = processBuilder.environment();
+
+        if(envs.keySet().contains("__CFBundleIdentifier")){
+            //MacOS
+            processBuilder.command("/opt/homebrew/bin/semgrep", "--version");
+        }else {
+            processBuilder.command("semgrep", "--version");
+        }
         try {
             Process process = processBuilder.start();
             int exitVal = process.waitFor();
