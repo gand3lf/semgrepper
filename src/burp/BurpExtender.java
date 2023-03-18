@@ -21,9 +21,23 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> cmdParam = new ArrayList<>();
-        cmdParam.add("semgrep");
+        String os = System.getProperty("os.name");
+
+        /* // "bash", "-l", "-c"        
+        cmdParam.add("semgrep");        
         cmdParam.add("--version");
-        processBuilder.command(cmdParam);
+        processBuilder.command(cmdParam); */
+
+        if (os == "Darwin" || os == "Linux"){
+            // MacOS Alternative
+            processBuilder.command("/usr/local/bin/semgrep", "--version");
+        } else if (os == "Linux"){
+            // Linux
+            processBuilder.command("/usr/bin/semgrep", "--version");
+        } else {
+            processBuilder.command("semgrep", "--version");
+        }
+        
         try {
             Process process = processBuilder.start();
             int exitVal = process.waitFor();
