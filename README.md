@@ -22,8 +22,12 @@ Please, follow these instructions to install Semgrep:
 * For macOS
   >brew install semgrep
 
+## Special thanks
+
+* [Giovanni Fazi](https://github.com/giovifazi)
+
 ## Current status ##
 
 | License | Compatibility |
 |---|---|
-| [![GNU v3](https://img.shields.io/badge/license-GPL-green.svg)](https://github.com/Gand3lf/heappy/blob/main/LICENSE) | [![Python 3](https://img.shields.io/badge/burpsuite-2022-orange)](https://portswigger.net/burp) |
+| [![GNU v3](https://img.shields.io/badge/license-GPL-green.svg)](https://github.com/Gand3lf/heappy/blob/main/LICENSE) | [![Python 3](https://img.shields.io/badge/burpsuite-2023-orange)](https://portswigger.net/burp) |
