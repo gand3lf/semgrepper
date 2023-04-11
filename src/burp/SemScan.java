@@ -52,6 +52,7 @@ public class SemScan implements IScannerCheck{
     private String semgrepLaunch(List<String> rules, String filepath){
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> cmdParam = new ArrayList<>();
+        cmdParam.add("--scan-unknown-extensions");
         cmdParam.add(this.semgrepPath);
         for(String rulePath:rules){
             String tmpLower = rulePath.toLowerCase();
