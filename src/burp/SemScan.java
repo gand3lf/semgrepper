@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.List;
 
 public class SemScan implements IScannerCheck{
+    private String semgrepPath = "semgrep";
     private IExtensionHelpers helpers;
     private IBurpExtenderCallbacks callbacks;
     private JTable scopeTab;
@@ -18,6 +19,13 @@ public class SemScan implements IScannerCheck{
         this.helpers = callbacks.getHelpers();
         this.scopeTab = scopeTab;
         this.outArea = outArea;
+
+        ProcessBuilder pb = new ProcessBuilder();
+        Map<String, String> envs = pb.environment();
+        if(envs.keySet().contains("__CFBundleIdentifier")){
+            //MacOS
+            this.semgrepPath="/opt/homebrew/bin/semgrep";
+        }
 
         this.pathString = new ArrayList<>();
         for(int i=0; i<pathTab.getRowCount(); i++){
@@ -44,7 +52,8 @@ public class SemScan implements IScannerCheck{
     private String semgrepLaunch(List<String> rules, String filepath){
         ProcessBuilder processBuilder = new ProcessBuilder();
         List<String> cmdParam = new ArrayList<>();
-        cmdParam.add("semgrep");
+        cmdParam.add("--scan-unknown-extensions");
+        cmdParam.add(this.semgrepPath);
         for(String rulePath:rules){
             String tmpLower = rulePath.toLowerCase();
             if( !rulePath.matches("[&;`|\"]+") && (tmpLower.endsWith(".yaml") || tmpLower.endsWith(".yml"))){

@@ -19,22 +19,12 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
         boolean semgrepInstalled = true;
 
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        List<String> cmdParam = new ArrayList<>();
-        String os = System.getProperty("os.name");
+        Map<String, String> envs = processBuilder.environment();
 
-        /* // "bash", "-l", "-c"        
-        cmdParam.add("semgrep");        
-        cmdParam.add("--version");
-        processBuilder.command(cmdParam); */
-
-        if (os == "Darwin" || os == "Linux"){
-            // MacOS Alternative
-            processBuilder.command("/usr/local/bin/semgrep", "--version");
-        } else if (os == "Linux"){
-            // Linux
-            processBuilder.command("/usr/bin/semgrep", "--version");
-        } else {
+        if(envs.keySet().contains("__CFBundleIdentifier")){
+            //MacOS
+            processBuilder.command("/opt/homebrew/bin/semgrep", "--version");
+        }else {
             processBuilder.command("semgrep", "--version");
         }
         
