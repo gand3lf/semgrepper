@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     private static final String author = "Riccardo Cardelli @gand3lf";
@@ -19,6 +20,7 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
 
         boolean semgrepInstalled = true;
 
+        ProcessBuilder processBuilder = new ProcessBuilder();
         Map<String, String> envs = processBuilder.environment();
 
         if(envs.keySet().contains("__CFBundleIdentifier")){
