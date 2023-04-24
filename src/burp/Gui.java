@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
@@ -191,10 +192,11 @@ public class Gui {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = pathTable.rowAtPoint(evt.getPoint());
                 String selectedPath = (String) modelPath.getValueAt(row,0);
-                Path filePath = Path.of(selectedPath);
+                Path filePath = Paths.get(selectedPath);
+
                 String fileContent = null;
                 try {
-                    fileContent = Files.readString(filePath);
+                    fileContent = new String(Files.readAllBytes(filePath));
                 } catch (IOException e) {
                     prevArea.setText("Cannot read the selected file.");
                 }
