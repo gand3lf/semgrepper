@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -193,7 +194,6 @@ public class Gui {
                 int row = pathTable.rowAtPoint(evt.getPoint());
                 String selectedPath = (String) modelPath.getValueAt(row,0);
                 Path filePath = Paths.get(selectedPath);
-
                 String fileContent = null;
                 try {
                     fileContent = new String(Files.readAllBytes(filePath));
@@ -214,14 +214,35 @@ public class Gui {
         addWithSpace(ruleAlignPanel, btnSelect);
 
         JFileChooser fileChooser = new JFileChooser();
+
+
+
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         btnSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                Path cachePath = null;
+                try {
+                    cachePath = Paths.get(System.getProperty("java.io.tmpdir") + "/" + BurpExtender.SEMDIR + "/" + BurpExtender.CACHEFILE);
+                    String cacheContent = new String(Files.readAllBytes(cachePath));
+                    if(!cacheContent.isEmpty()){
+                        fileChooser.setCurrentDirectory(new File(cacheContent));
+                    }
+                } catch (NoSuchFileException ex) {
+                } catch (Exception ex){
+                    throw new RuntimeException(ex);
+                }
+
                 int choice = fileChooser.showOpenDialog(multipleFileChooser);
                 if (choice == JFileChooser.APPROVE_OPTION) {
                     File[] openFiles = fileChooser.getSelectedFiles();
+
+                    try {
+                        Files.write(cachePath, fileChooser.getCurrentDirectory().getAbsoluteFile().toString().getBytes());
+                    } catch (Exception ex) {}
+
                     for(File f: openFiles){
                         if(f.isDirectory()) {
                             try {
@@ -357,7 +378,7 @@ public class Gui {
         });
 
         String[] currFields = new String[]{"And", "Response Header", "Contains", ""};
-
+        modelScope.addRow(new String[]{"And", "Response Header", "Contains", "javascript"});
         ActionListener okListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -488,7 +509,7 @@ public class Gui {
         addLeftAligned(pnlMain, new JLabel("The following panel reports the error logs of the current panel."));
 
 
-        outTextArea.setText("");
+        //outTextArea.setText("");
         outTextArea.setEditable(false);
 
         JScrollPane outScroll = new JScrollPane(outTextArea);
