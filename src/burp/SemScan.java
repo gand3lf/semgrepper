@@ -5,8 +5,11 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
+import org.json.JSONObject;
 
 public class SemScan implements IScannerCheck{
+    public static String[] semgrepCmd = new String[]{"semgrep"};
+    private boolean isWsl;
     private IExtensionHelpers helpers;
     private IBurpExtenderCallbacks callbacks;
     private JTable scopeTab;
@@ -19,6 +22,8 @@ public class SemScan implements IScannerCheck{
         this.scopeTab = scopeTab;
         this.outArea = outArea;
 
+        this.isWsl = this.semgrepCmd[0].equals("wsl")? true: false;
+
         this.pathString = new ArrayList<>();
         for(int i=0; i<pathTab.getRowCount(); i++){
             pathString.add((String)pathTab.getValueAt(i, 0));
@@ -28,10 +33,12 @@ public class SemScan implements IScannerCheck{
     }
     private String writeInTmpFile(String content){
         String tmpdir = System.getProperty("java.io.tmpdir") + "/" + BurpExtender.SEMDIR;
+        tmpdir = tmpdir.replace("\\","/");
         byte[] array = new byte[32];
         new Random().nextBytes(array);
         String filepath = tmpdir + "/" + Base64.getEncoder().encodeToString(array).replace("/","_");
-
+        //if(this.isWsl)
+        //    filepath = Utils.toWslPath(filepath);
         try {
             FileWriter fw = new FileWriter(filepath);
             fw.write(content);
@@ -43,17 +50,28 @@ public class SemScan implements IScannerCheck{
     }
     private String semgrepLaunch(List<String> rules, String filepath){
         ProcessBuilder processBuilder = new ProcessBuilder();
+
         List<String> cmdParam = new ArrayList<>();
-        cmdParam.add("semgrep");
+        for (String s: semgrepCmd) {
+            cmdParam.add(s);
+        }
+        cmdParam.add("--scan-unknown-extensions");
         for(String rulePath:rules){
             String tmpLower = rulePath.toLowerCase();
             if( !rulePath.matches("[&;`|\"]+") && (tmpLower.endsWith(".yaml") || tmpLower.endsWith(".yml"))){
                 cmdParam.add("--config");
-                cmdParam.add(rulePath);
+                if(this.isWsl) {
+                    cmdParam.add(Utils.toWslPath(rulePath));
+                }else {
+                    cmdParam.add(rulePath);
+                }
             }
         }
-        cmdParam.add(filepath);
-        //cmdParam.add("--emacs");
+        if(this.isWsl)
+            cmdParam.add(Utils.toWslPath(filepath));
+        else
+            cmdParam.add(filepath);
+        cmdParam.add("--gitlab-secrets");
 
         processBuilder.command(cmdParam);
 
@@ -156,7 +174,7 @@ public class SemScan implements IScannerCheck{
             String responseBody = helpers.bytesToString(response).substring(bodyOffset);
 
             String semRes = analyzeResponse(responseBody, requestInfo.getUrl().getPath());
-            if(!semRes.equals("")) {
+            if(!semRes.isEmpty()){
 
                 List<IScanIssue> issues = new ArrayList<>(1);
 
@@ -181,100 +199,4 @@ public class SemScan implements IScannerCheck{
     public int consolidateDuplicateIssues(IScanIssue existingIssue, IScanIssue newIssue) {
         return existingIssue.getIssueDetail().equals(newIssue.getIssueDetail()) ? -1 : 0;
     }
-}
-class CustomScanIssue implements IScanIssue{
-    private IHttpService httpService;
-    private URL url;
-    private IHttpRequestResponse[] httpMessages;
-    private String name;
-    private String detail;
-    private String severity;
-
-    public CustomScanIssue(
-            IHttpService httpService,
-            URL url,
-            IHttpRequestResponse[] httpMessages,
-            String name,
-            String detail,
-            String severity)
-    {
-        this.httpService = httpService;
-        this.url = url;
-        this.httpMessages = httpMessages;
-        this.name = name;
-        this.detail = detail;
-        this.severity = severity;
-    }
-
-    @Override
-    public URL getUrl()
-    {
-        return url;
-    }
-
-    @Override
-    public String getIssueName()
-    {
-        return name;
-    }
-
-    @Override
-    public int getIssueType()
-    {
-        return 0;
-    }
-
-    @Override
-    public String getSeverity()
-    {
-        return severity;
-    }
-
-    @Override
-    public String getConfidence()
-    {
-        return "Firm";
-    }
-
-    @Override
-    public String getIssueBackground()
-    {
-        return null;
-    }
-
-    @Override
-    public String getRemediationBackground()
-    {
-        return null;
-    }
-
-    @Override
-    public String getIssueDetail()
-    {
-        String body = this.detail.replace("┆","|");
-        body = body.replace("⋮",":");
-        body = body.replace("<","&#x3c;");
-        body = body.replace(">","&#x3e;");
-        body = body.replace("\n","<br>");
-        return body;
-    }
-
-    @Override
-    public String getRemediationDetail()
-    {
-        return null;
-    }
-
-    @Override
-    public IHttpRequestResponse[] getHttpMessages()
-    {
-        return httpMessages;
-    }
-
-    @Override
-    public IHttpService getHttpService()
-    {
-        return httpService;
-    }
-
 }
