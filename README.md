@@ -22,6 +22,15 @@ Please, follow these instructions to install Semgrep:
 * For macOS
   >brew install semgrep
 
+## Instructions to run Semgrepper
+
+1. Add the Semgrepper extension to Burp Suite.
+2. Select the rules which you want to use toggle the button at the top to "Current Semgrepper is on" (see the following image).
+
+![image](https://github.com/tghosth/semgrepper/assets/13623828/303a3e80-3af6-4bf1-b576-37b7b6edb402)
+
+3. Go to the host you want to scan in the "Target" tab and select "Passively scan this host".
+
 ## Special thanks
 
 * [Giovanni Fazi](https://github.com/giovifazi)
