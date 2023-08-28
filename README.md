@@ -22,6 +22,17 @@ Please, follow these instructions to install Semgrep:
 * For macOS
   >brew install semgrep
 
+## Tutorial
+
+1. Add the Semgrepper extension to Burp Suite.
+2. From the section "Rules Files", select the Semgrep rules you want to use.
+![rulesfiles](https://github.com/tghosth/semgrepper/assets/18307497/e0629c82-0ec3-4311-b12f-dc9ae4310a3c)
+3. From the section "Scope", it is possible to configure some constraints to apply or not a rule to a specific response.  
+![scope](https://github.com/tghosth/semgrepper/assets/18307497/a16f6b1c-1f70-4678-b9fe-7e9663fc7c94)
+4. Enable the rules by toggling the button "Current Semgrepper is off/on".  
+![semgrepperbutton](https://github.com/tghosth/semgrepper/assets/18307497/1490522d-3512-4e2a-9ee4-36e732f650a8)
+5. Passively scan the target host. 
+
 ## Special thanks
 
 * [Giovanni Fazi](https://github.com/giovifazi)
