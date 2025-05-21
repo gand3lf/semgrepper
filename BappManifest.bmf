@@ -2,12 +2,12 @@ Uuid: 63cd174fe7e74931a86cad344407f6ab
 ExtensionType: 1
 Name: Semgrepper
 RepoName: semgrepper
-ScreenVersion: 1.1
-SerialVersion: 3
+ScreenVersion: 1.4
+SerialVersion: 5
 MinPlatformVersion: 0
 ProOnly: True
 Author: Riccardo Cardelli (@gand3lf)
 ShortDescription: Use Semgrep inside Burp Suite
-EntryPoint: build/libs/semgrepper-all.jar
+EntryPoint: build/libs/semgrepper.jar
 BuildCommand: ./gradlew fatJar
 SupportedProducts: Pro

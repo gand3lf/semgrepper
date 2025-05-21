@@ -4,7 +4,8 @@ import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SemScan implements IScannerCheck{
@@ -71,7 +72,8 @@ public class SemScan implements IScannerCheck{
             cmdParam.add(Utils.toWslPath(filepath));
         else
             cmdParam.add(filepath);
-        cmdParam.add("--gitlab-secrets");
+        cmdParam.add("--json");
+        cmdParam.add("--quiet");
 
         processBuilder.command(cmdParam);
 
@@ -174,17 +176,22 @@ public class SemScan implements IScannerCheck{
             String responseBody = helpers.bytesToString(response).substring(bodyOffset);
 
             String semRes = analyzeResponse(responseBody, requestInfo.getUrl().getPath());
-            if(!semRes.isEmpty()){
+            JSONObject obj = new JSONObject(semRes);
+            JSONArray objArr = obj.getJSONArray("results");
+            
+            if(!semRes.isEmpty() && objArr.length()>0){
 
                 List<IScanIssue> issues = new ArrayList<>(1);
-
+                
                 issues.add(new CustomScanIssue(
+                        callbacks,
                         baseRequestResponse.getHttpService(),
                         helpers.analyzeRequest(baseRequestResponse).getUrl(),
                         new IHttpRequestResponse[]{baseRequestResponse},
                         "Semgrep findings",
                         semRes,
-                        "Medium"));
+                        "Medium",
+                        bodyOffset));
                 return issues;
             }
         }
