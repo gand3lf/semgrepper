@@ -18,6 +18,10 @@ public class Utils {
         }
         return null;
     }
+    public static String GetUsername(){
+        String username = System.getProperty("user.name");
+        return username;
+    }
     public static int exec(String[] command){
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(command);

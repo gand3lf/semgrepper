@@ -30,7 +30,9 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
             if(Utils.exec(new String[]{"wsl", "semgrep", "--version"}) == 0)
                 semgrepCmd = new String[]{"wsl", "semgrep"};
         }else if(Utils.getOperatingSystem() == Utils.OS.LINUX){
-
+            String currentPath = envs.get("PATH");
+            String newPathEntry = "/home/" + Utils.GetUsername() + "/.local/bin/semgrep";
+            envs.put("PATH", currentPath + ":" + newPathEntry);
         }else if(Utils.getOperatingSystem() == Utils.OS.MAC){
             if(Utils.exec(new String[]{"/opt/homebrew/bin/semgrep", "--version"}) == 0)
                 semgrepCmd = new String[]{"/opt/homebrew/bin/semgrep"};
